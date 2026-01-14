@@ -1,5 +1,6 @@
 using LegacyOrderService.Data;
-using LegacyOrderService.Models;
+using LegacyOrderService.Interfaces;
+using LegacyOrderService.Services;
 
 namespace LegacyOrderService
 {
@@ -8,6 +9,11 @@ namespace LegacyOrderService
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Order Processor!");
+
+            // Manually resolvin dependencies, no DI container used
+            IProductRepository productRepo = new ProductRepository();
+            IOrderRepository orderRepo = new OrderRepository();
+            IOrderService orderService = new OrderService(productRepo, orderRepo);
 
             string customerName;
             while (true)
@@ -19,33 +25,18 @@ namespace LegacyOrderService
                 Console.WriteLine("Error: Customer name cannot be empty.");
             }
 
-            var productRepo = new ProductRepository();
             string productName;
-            Product? product = null;
             while (true)
             {
                 Console.WriteLine("Enter product name:");
-                productName = Console.ReadLine() ?? ""; // a real system uses product IDs instead of names
+                productName = Console.ReadLine() ?? "";
 
-                // validate input
-                if (string.IsNullOrWhiteSpace(productName))
+                if (!string.IsNullOrWhiteSpace(productName))
                 {
-                    Console.WriteLine("Error: Product name cannot be empty.");
-                    continue;
+                    break;
                 }
 
-                try
-                {
-                    product = productRepo.GetProduct(productName);
-                    if (product != null)
-                    {
-                        break;
-                    }
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine($"Error: Product '{productName}' not found. Please try again.");
-                }
+                Console.WriteLine("Error: Product name cannot be empty.");
             }
 
             int qty;
@@ -59,23 +50,13 @@ namespace LegacyOrderService
 
             Console.WriteLine("Processing order...");
 
-            Order order = new Order
-            {
-                CustomerName = customerName,
-                ProductName = productName,
-                Quantity = qty,
-                Price = product.Price,
-            };
+            var order = orderService.PlaceOrder(customerName, productName, qty);
 
             Console.WriteLine("Order complete!");
-            Console.WriteLine("Customer: " + order.CustomerName);
-            Console.WriteLine("Product: " + order.ProductName);
-            Console.WriteLine("Quantity: " + order.Quantity);
-            Console.WriteLine("Total: $" + order.Total);
-
-            Console.WriteLine("Saving order to database...");
-            var repo = new OrderRepository();
-            repo.Save(order);
+            Console.WriteLine($"Customer: {order.CustomerName}");
+            Console.WriteLine($"Product: {order.ProductName}");
+            Console.WriteLine($"Quantity: {order.Quantity}");
+            Console.WriteLine($"Total: ${order.Total}");
             Console.WriteLine("Done.");
         }
     }

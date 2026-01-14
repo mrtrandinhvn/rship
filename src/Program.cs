@@ -21,7 +21,11 @@ namespace LegacyOrderService
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
-            using var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog(Log.Logger);
+            });
+
             var logger = loggerFactory.CreateLogger<OrderService>();
             IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
             IProductRepository productRepo = new CachingProductRepository(new ProductRepository(), cache);

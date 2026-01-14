@@ -1,3 +1,5 @@
+using LegacyOrderService.Exceptions;
+
 namespace LegacyOrderService.Models
 {
     public class Order
@@ -19,16 +21,16 @@ namespace LegacyOrderService.Models
         public static Order Create(string customerName, string productName, int quantity, double price)
         {
             if (string.IsNullOrWhiteSpace(customerName))
-                throw new ArgumentException("Customer name cannot be empty.", nameof(customerName));
+                throw new DomainValidationException("Customer name cannot be empty.");
 
             if (string.IsNullOrWhiteSpace(productName))
-                throw new ArgumentException("Product name cannot be empty.", nameof(productName));
+                throw new DomainValidationException("Product name cannot be empty.");
 
             if (quantity <= 0)
-                throw new ArgumentException("Quantity must be positive.", nameof(quantity));
+                throw new DomainValidationException("Quantity must be positive.");
 
             if (price < 0)
-                throw new ArgumentException("Price cannot be negative.", nameof(price));
+                throw new DomainValidationException("Price cannot be negative.");
 
             return new Order(customerName, productName, quantity, price);
         }

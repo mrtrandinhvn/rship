@@ -1,4 +1,5 @@
 ﻿// Data/ProductRepository.cs
+using LegacyOrderService.Exceptions;
 using LegacyOrderService.Interfaces;
 using LegacyOrderService.Models;
 
@@ -29,7 +30,7 @@ namespace LegacyOrderService.Data
             if (_products.TryGetValue(productName, out var product))
                 return product;
 
-            throw new KeyNotFoundException($"Product '{productName}' not found");
+            throw new ProductNotFoundException(productName);
         }
     }
 }

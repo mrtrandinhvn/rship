@@ -4,6 +4,7 @@ namespace LegacyOrderService.Models
 {
     public class Order
     {
+        public long Id { get; private set; }
         public string CustomerName { get; }
         public string ProductName { get; }
         public int Quantity { get; }
@@ -42,6 +43,14 @@ namespace LegacyOrderService.Models
                 throw new DomainValidationException("Price cannot be negative.");
 
             return new Order(customerName, productName, quantity, price);
+        }
+
+        public void AssignId(long id)
+        {
+            if (Id != 0)
+                throw new DomainValidationException("Order ID already assigned.");
+
+            Id = id;
         }
     }
 }

@@ -1,4 +1,5 @@
 using LegacyOrderService.Data;
+using LegacyOrderService.Events;
 using LegacyOrderService.Exceptions;
 using LegacyOrderService.Interfaces;
 using LegacyOrderService.Models;
@@ -30,7 +31,8 @@ namespace LegacyOrderService
             IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
             IProductRepository productRepo = new CachingProductRepository(new ProductRepository(), cache);
             IOrderRepository orderRepo = new OrderRepository($"Data Source={Path.Combine(AppContext.BaseDirectory, "orders.db")}");
-            IOrderService orderService = new OrderService(productRepo, orderRepo, logger);
+            IDomainEventDispatcher eventDispatcher = new DomainEventDispatcher(loggerFactory.CreateLogger<DomainEventDispatcher>());
+            IOrderService orderService = new OrderService(productRepo, orderRepo, eventDispatcher, logger);
 
             string customerName;
             while (true)

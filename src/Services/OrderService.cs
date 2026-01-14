@@ -1,6 +1,7 @@
-using Microsoft.Extensions.Logging;
+using LegacyOrderService.Exceptions;
 using LegacyOrderService.Interfaces;
 using LegacyOrderService.Models;
+using Microsoft.Extensions.Logging;
 
 namespace LegacyOrderService.Services
 {
@@ -22,8 +23,13 @@ namespace LegacyOrderService.Services
             _logger.LogInformation("Placing order for customer {CustomerName}, product {ProductName}, quantity {Quantity}",
                 customerName, productName, quantity);
 
-            var product = await _productRepository.GetProductByNameAsync(productName)
-                ?? throw new ArgumentException($"Product '{productName}' not found.", nameof(productName));
+            var product = await _productRepository.GetProductByNameAsync(productName);
+            if (product is null)
+            {
+                _logger.LogWarning("Order rejected: product {Product} not found", productName);
+                throw new ProductNotFoundException(productName);
+            }
+
             var order = Order.Create(customerName, productName, quantity, product.Price);
             await _orderRepository.SaveAsync(order);
 

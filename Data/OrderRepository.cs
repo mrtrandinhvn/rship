@@ -1,9 +1,10 @@
 using Microsoft.Data.Sqlite;
+using LegacyOrderService.Interfaces;
 using LegacyOrderService.Models;
 
 namespace LegacyOrderService.Data
 {
-    public class OrderRepository
+    public class OrderRepository : IOrderRepository
     {
         private readonly string _connectionString = $"Data Source={Path.Combine(AppContext.BaseDirectory, "orders.db")}";
 

@@ -8,12 +8,12 @@ namespace LegacyOrderService.Data
     {
         private readonly string _connectionString = $"Data Source={Path.Combine(AppContext.BaseDirectory, "orders.db")}";
 
-        public void Save(Order order)
+        public async Task SaveAsync(Order order)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = @"
                 INSERT INTO Orders (CustomerName, ProductName, Quantity, Price)
                 VALUES (@customerName, @productName, @quantity, @price)";
@@ -22,7 +22,7 @@ namespace LegacyOrderService.Data
             command.Parameters.AddWithValue("@quantity", order.Quantity);
             command.Parameters.AddWithValue("@price", order.Price);
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

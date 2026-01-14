@@ -20,16 +20,16 @@ namespace LegacyOrderService.Data
         /// results if calling frequently.</remarks>
         /// <param name="productName">The name of the product to retrieve. Cannot be null or empty.</param>
         /// <returns>The <see cref="Product"/> instance that matches the specified name.</returns>
-        /// <exception cref="Exception">Thrown if a product with the specified name does not exist in the collection.</exception>
-        public Product? GetProductByName(string productName)
+        /// <exception cref="KeyNotFoundException">Thrown if a product with the specified name does not exist in the collection.</exception>
+        public async Task<Product?> GetProductByNameAsync(string productName)
         {
-            // Simulate an expensive lookup
-            Thread.Sleep(500);
+            // Simulate an expensive async lookup
+            await Task.Delay(500);
 
             if (_products.TryGetValue(productName, out var product))
                 return product;
 
-            throw new Exception("Product not found");
+            throw new KeyNotFoundException($"Product '{productName}' not found");
         }
     }
 }

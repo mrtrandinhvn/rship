@@ -10,6 +10,6 @@ namespace LegacyOrderService.Interfaces
         /// <param name="productName">The name of the product to search for. Cannot be null or empty.</param>
         /// <returns>A <see cref="Product"/> instance that matches the specified name, or <see langword="null"/> if no matching
         /// product is found.</returns>
-        Product? GetProductByName(string productName);
+        Task<Product?> GetProductByNameAsync(string productName);
     }
 }

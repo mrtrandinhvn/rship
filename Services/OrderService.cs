@@ -14,11 +14,12 @@ namespace LegacyOrderService.Services
             _orderRepository = orderRepository;
         }
 
-        public Order PlaceOrder(string customerName, string productName, int quantity)
+        public async Task<Order> PlaceOrderAsync(string customerName, string productName, int quantity)
         {
-            var product = _productRepository.GetProductByName(productName) ?? throw new ArgumentException($"Product '{productName}' not found.", nameof(productName));
+            var product = await _productRepository.GetProductByNameAsync(productName)
+                ?? throw new ArgumentException($"Product '{productName}' not found.", nameof(productName));
             var order = Order.Create(customerName, productName, quantity, product.Price);
-            _orderRepository.Save(order);
+            await _orderRepository.SaveAsync(order);
             return order;
         }
     }

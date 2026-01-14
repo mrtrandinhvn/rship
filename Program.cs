@@ -6,11 +6,11 @@ namespace LegacyOrderService
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("Welcome to Order Processor!");
 
-            // Manually resolvin dependencies, no DI container used
+            // Manually resolving dependencies, no DI container used
             IProductRepository productRepo = new ProductRepository();
             IOrderRepository orderRepo = new OrderRepository();
             IOrderService orderService = new OrderService(productRepo, orderRepo);
@@ -50,7 +50,7 @@ namespace LegacyOrderService
 
             Console.WriteLine("Processing order...");
 
-            var order = orderService.PlaceOrder(customerName, productName, qty);
+            var order = await orderService.PlaceOrderAsync(customerName, productName, qty);
 
             Console.WriteLine("Order complete!");
             Console.WriteLine($"Customer: {order.CustomerName}");

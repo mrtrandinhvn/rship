@@ -8,6 +8,6 @@ namespace LegacyOrderService.Interfaces
         /// Saves the specified order to the data store.
         /// </summary>
         /// <param name="order">The order to be saved. Cannot be null.</param>
-        void Save(Order order);
+        Task SaveAsync(Order order);
     }
 }

@@ -29,7 +29,7 @@ namespace LegacyOrderService
             var logger = loggerFactory.CreateLogger<OrderService>();
             IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
             IProductRepository productRepo = new CachingProductRepository(new ProductRepository(), cache);
-            IOrderRepository orderRepo = new OrderRepository();
+            IOrderRepository orderRepo = new OrderRepository($"Data Source={Path.Combine(AppContext.BaseDirectory, "orders.db")}");
             IOrderService orderService = new OrderService(productRepo, orderRepo, logger);
 
             string customerName;

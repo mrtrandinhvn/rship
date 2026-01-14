@@ -1,10 +1,13 @@
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 using LegacyOrderService.Data;
+using LegacyOrderService.Exceptions;
 using LegacyOrderService.Interfaces;
 using LegacyOrderService.Models;
 using LegacyOrderService.Services;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace LegacyOrderService
 {
@@ -15,10 +18,15 @@ namespace LegacyOrderService
             Console.WriteLine("Welcome to Order Processor!");
 
             // Manually resolving dependencies, no DI container used
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+            using var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
+            var logger = loggerFactory.CreateLogger<OrderService>();
             IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
             IProductRepository productRepo = new CachingProductRepository(new ProductRepository(), cache);
             IOrderRepository orderRepo = new OrderRepository();
-            IOrderService orderService = new OrderService(productRepo, orderRepo);
+            IOrderService orderService = new OrderService(productRepo, orderRepo, logger);
 
             string customerName;
             while (true)
@@ -55,13 +63,21 @@ namespace LegacyOrderService
 
             Console.WriteLine("Processing order...");
 
-            var order = await orderService.PlaceOrderAsync(customerName, productName, qty);
-            var orderReadModel = order.ToReadModel();
-            Console.WriteLine("Order complete!");
-            Console.WriteLine($"Customer: {orderReadModel.CustomerName}");
-            Console.WriteLine($"Product: {orderReadModel.ProductName}");
-            Console.WriteLine($"Quantity: {orderReadModel.Quantity}");
-            Console.WriteLine($"Total: ${orderReadModel.Total}");
+            try
+            {
+                var order = await orderService.PlaceOrderAsync(customerName, productName, qty);
+                var orderReadModel = order.ToReadModel();
+                Console.WriteLine("Order complete!");
+                Console.WriteLine($"Customer: {orderReadModel.CustomerName}");
+                Console.WriteLine($"Product: {orderReadModel.ProductName}");
+                Console.WriteLine($"Quantity: {orderReadModel.Quantity}");
+                Console.WriteLine($"Total: ${orderReadModel.Total}");
+            }
+            catch (DomainException ex)
+            {
+                logger.LogError(ex, "Domain Exception: ");
+            }
+
             Console.WriteLine("Done.");
         }
     }

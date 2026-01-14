@@ -29,7 +29,8 @@ namespace LegacyOrderService.Data
                 return JsonSerializer.Deserialize<Product>(cached);
 
             var product = await _inner.GetProductByNameAsync(productName);
-            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(product), _cacheOptions);
+            if (product is not null)
+                await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(product), _cacheOptions);
             return product;
         }
     }

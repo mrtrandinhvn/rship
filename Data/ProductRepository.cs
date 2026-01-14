@@ -9,9 +9,9 @@ namespace LegacyOrderService.Data
     {
         private readonly Dictionary<string, Product> _products = new()
         {
-            ["Widget"] = new Product { Id = 1, Name = "Widget", Price = 12.99 },
-            ["Gadget"] = new Product { Id = 2, Name = "Gadget", Price = 15.49 },
-            ["Doohickey"] = new Product { Id = 3, Name = "Doohickey", Price = 8.75 }
+            ["Widget"] = new Product { Id = 1, Name = "Widget", Price = 12.99M },
+            ["Gadget"] = new Product { Id = 2, Name = "Gadget", Price = 15.49M },
+            ["Doohickey"] = new Product { Id = 3, Name = "Doohickey", Price = 8.75M }
         };
 
         /// <summary>

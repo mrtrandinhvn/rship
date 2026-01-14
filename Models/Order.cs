@@ -7,10 +7,9 @@ namespace LegacyOrderService.Models
         public string CustomerName { get; }
         public string ProductName { get; }
         public int Quantity { get; }
-        public double Price { get; }
-        public double Total => Quantity * Price;
+        public decimal Price { get; }
 
-        private Order(string customerName, string productName, int quantity, double price)
+        private Order(string customerName, string productName, int quantity, decimal price)
         {
             CustomerName = customerName;
             ProductName = productName;
@@ -18,7 +17,7 @@ namespace LegacyOrderService.Models
             Price = price;
         }
 
-        public static Order Create(string customerName, string productName, int quantity, double price)
+        public static Order Create(string customerName, string productName, int quantity, decimal price)
         {
             if (string.IsNullOrWhiteSpace(customerName))
                 throw new DomainValidationException("Customer name cannot be empty.");

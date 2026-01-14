@@ -10,32 +10,31 @@ namespace LegacyOrderService
         {
             Console.WriteLine("Welcome to Order Processor!");
             Console.WriteLine("Enter customer name:");
-            string name = Console.ReadLine();
+            string customerName = Console.ReadLine();
 
             Console.WriteLine("Enter product name:");
-            string product = Console.ReadLine();
+            string productName = Console.ReadLine(); // a real system uses product IDs instead of names
             var productRepo = new ProductRepository();
-            double price = productRepo.GetPrice(product);
-
+            double productPrice = productRepo.GetPrice(productName);
 
             Console.WriteLine("Enter quantity:");
             int qty = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("Processing order...");
 
-            Order order = new Order();
-            order.CustomerName = name;
-            order.ProductName = product;
-            order.Quantity = qty;
-            order.Price = 10.0;
-
-            double total = order.Quantity * order.Price;
+            Order order = new Order
+            {
+                CustomerName = customerName,
+                ProductName = productName,
+                Quantity = qty,
+                Price = productPrice,
+            };
 
             Console.WriteLine("Order complete!");
             Console.WriteLine("Customer: " + order.CustomerName);
             Console.WriteLine("Product: " + order.ProductName);
             Console.WriteLine("Quantity: " + order.Quantity);
-            Console.WriteLine("Total: $" + price);
+            Console.WriteLine("Total: $" + order.Total);
 
             Console.WriteLine("Saving order to database...");
             var repo = new OrderRepository();

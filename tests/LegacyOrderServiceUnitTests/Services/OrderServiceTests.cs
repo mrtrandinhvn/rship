@@ -26,7 +26,7 @@ public class OrderServiceTests
     public async Task PlaceOrderAsync_WithValidProduct_ReturnsOrder()
     {
         // Arrange
-        var product = new Product { Id = 1, Name = "Widget", Price = 9.99m };
+        var product = new Product { Name = "Widget", Price = 9.99m };
         _productRepositoryMock
             .Setup(x => x.GetProductByNameAsync("Widget"))
             .ReturnsAsync(product);
@@ -47,7 +47,7 @@ public class OrderServiceTests
         // Arrange
         const string CustomerName = "John Doe";
         const string ProductName = "Widget";
-        var product = new Product { Id = 1, Name = ProductName, Price = 9.99m };
+        var product = new Product { Name = ProductName, Price = 9.99m };
         _productRepositoryMock
             .Setup(x => x.GetProductByNameAsync(ProductName))
             .ReturnsAsync(product);

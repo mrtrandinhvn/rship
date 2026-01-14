@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using LegacyOrderService.Data;
 using LegacyOrderService.Interfaces;
 using LegacyOrderService.Models;
@@ -12,7 +15,8 @@ namespace LegacyOrderService
             Console.WriteLine("Welcome to Order Processor!");
 
             // Manually resolving dependencies, no DI container used
-            IProductRepository productRepo = new ProductRepository();
+            IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+            IProductRepository productRepo = new CachingProductRepository(new ProductRepository(), cache);
             IOrderRepository orderRepo = new OrderRepository();
             IOrderService orderService = new OrderService(productRepo, orderRepo);
 

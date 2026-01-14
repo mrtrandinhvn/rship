@@ -1,5 +1,6 @@
 using LegacyOrderService.Data;
 using LegacyOrderService.Interfaces;
+using LegacyOrderService.Models;
 using LegacyOrderService.Services;
 
 namespace LegacyOrderService
@@ -51,12 +52,12 @@ namespace LegacyOrderService
             Console.WriteLine("Processing order...");
 
             var order = await orderService.PlaceOrderAsync(customerName, productName, qty);
-
+            var orderReadModel = order.ToReadModel();
             Console.WriteLine("Order complete!");
-            Console.WriteLine($"Customer: {order.CustomerName}");
-            Console.WriteLine($"Product: {order.ProductName}");
-            Console.WriteLine($"Quantity: {order.Quantity}");
-            Console.WriteLine($"Total: ${order.Total}");
+            Console.WriteLine($"Customer: {orderReadModel.CustomerName}");
+            Console.WriteLine($"Product: {orderReadModel.ProductName}");
+            Console.WriteLine($"Quantity: {orderReadModel.Quantity}");
+            Console.WriteLine($"Total: ${orderReadModel.Total}");
             Console.WriteLine("Done.");
         }
     }

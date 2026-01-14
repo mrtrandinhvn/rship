@@ -1,26 +1,44 @@
 ﻿// Data/ProductRepository.cs
-using System;
-using System.Collections.Generic;
-using System.Threading;
+using LegacyOrderService.Models;
 
 namespace LegacyOrderService.Data
 {
     public class ProductRepository
     {
-        private readonly Dictionary<string, double> _productPrices = new()
+        private readonly Dictionary<string, Product> _products = new()
         {
-            ["Widget"] = 12.99,
-            ["Gadget"] = 15.49,
-            ["Doohickey"] = 8.75
+            ["Widget"] = new Product { Id = 1, Name = "Widget", Price = 12.99 },
+            ["Gadget"] = new Product { Id = 2, Name = "Gadget", Price = 15.49 },
+            ["Doohickey"] = new Product { Id = 3, Name = "Doohickey", Price = 8.75 }
         };
 
+        [Obsolete("Use GetProduct instead. The product data is cached for better performance.")]
         public double GetPrice(string productName)
         {
             // Simulate an expensive lookup
             Thread.Sleep(500);
 
-            if (_productPrices.TryGetValue(productName, out var price))
-                return price;
+            if (_products.TryGetValue(productName, out var product))
+                return product.Price;
+
+            throw new Exception("Product not found");
+        }
+
+        /// <summary>
+        /// Retrieves the product with the specified name from the collection.
+        /// </summary>
+        /// <remarks>This method performs a potentially time-consuming lookup operation. Consider caching
+        /// results if calling frequently.</remarks>
+        /// <param name="productName">The name of the product to retrieve. Cannot be null or empty.</param>
+        /// <returns>The <see cref="Product"/> instance that matches the specified name.</returns>
+        /// <exception cref="Exception">Thrown if a product with the specified name does not exist in the collection.</exception>
+        public Product GetProduct(string productName)
+        {
+            // Simulate an expensive lookup
+            Thread.Sleep(500);
+
+            if (_products.TryGetValue(productName, out var product))
+                return product;
 
             throw new Exception("Product not found");
         }

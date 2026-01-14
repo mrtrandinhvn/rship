@@ -1,6 +1,5 @@
-using System;
-using LegacyOrderService.Models;
 using LegacyOrderService.Data;
+using LegacyOrderService.Models;
 
 namespace LegacyOrderService
 {
@@ -9,16 +8,54 @@ namespace LegacyOrderService
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Order Processor!");
-            Console.WriteLine("Enter customer name:");
-            string customerName = Console.ReadLine();
 
-            Console.WriteLine("Enter product name:");
-            string productName = Console.ReadLine(); // a real system uses product IDs instead of names
+            string customerName;
+            while (true)
+            {
+                Console.WriteLine("Enter customer name:");
+                customerName = Console.ReadLine() ?? "";
+                if (!string.IsNullOrWhiteSpace(customerName))
+                    break;
+                Console.WriteLine("Error: Customer name cannot be empty.");
+            }
+
             var productRepo = new ProductRepository();
-            double productPrice = productRepo.GetPrice(productName);
+            string productName;
+            Product? product = null;
+            while (true)
+            {
+                Console.WriteLine("Enter product name:");
+                productName = Console.ReadLine() ?? ""; // a real system uses product IDs instead of names
 
-            Console.WriteLine("Enter quantity:");
-            int qty = Convert.ToInt32(Console.ReadLine());
+                // validate input
+                if (string.IsNullOrWhiteSpace(productName))
+                {
+                    Console.WriteLine("Error: Product name cannot be empty.");
+                    continue;
+                }
+
+                try
+                {
+                    product = productRepo.GetProduct(productName);
+                    if (product != null)
+                    {
+                        break;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"Error: Product '{productName}' not found. Please try again.");
+                }
+            }
+
+            int qty;
+            while (true)
+            {
+                Console.WriteLine("Enter quantity:");
+                if (int.TryParse(Console.ReadLine(), out qty) && qty > 0)
+                    break;
+                Console.WriteLine("Error: Quantity must be a positive number.");
+            }
 
             Console.WriteLine("Processing order...");
 
@@ -27,7 +64,7 @@ namespace LegacyOrderService
                 CustomerName = customerName,
                 ProductName = productName,
                 Quantity = qty,
-                Price = productPrice,
+                Price = product.Price,
             };
 
             Console.WriteLine("Order complete!");

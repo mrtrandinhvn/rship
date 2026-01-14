@@ -4,9 +4,9 @@
         string CustomerName,
         string ProductName,
         int Quantity,
-        decimal Price
+        decimal Price,
+        decimal Total
     )
     {
-        public decimal Total => Quantity * Price;
     }
 }

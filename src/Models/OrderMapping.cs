@@ -8,7 +8,8 @@
                 order.CustomerName,
                 order.ProductName,
                 order.Quantity,
-                order.Price
+                order.Price,
+                order.Total
             );
         }
     }
